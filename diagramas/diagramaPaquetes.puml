@@ -1,0 +1,85 @@
+@startuml
+title Diagrama de Paquetes - EduHub Microservicios
+
+package "Admin_service" {
+  package "controller" {
+    class AdminController
+  }
+  package "model" {
+    class Admin
+  }
+  package "repository" {
+    class AdminRepository
+  }
+  package "service" {
+    class ServiceAdmin
+  }
+}
+
+package "Estudiante_service" {
+  package "controller" {
+    class EstudianteController
+  }
+  package "model" {
+    class Estudiante
+  }
+  package "repository" {
+    class EstudianteRepository
+  }
+  package "service" {
+    class ServiceEstudiante
+  }
+}
+
+package "Docente_service" {
+  package "controller" {
+    class DocenteController
+  }
+  package "model" {
+    class Docente
+  }
+  package "repository" {
+    class DocenteRepository
+  }
+  package "service" {
+    class ServiceDocente
+  }
+}
+
+package "Asignatura_service" {
+  package "controller" {
+    class AsignaturaController
+  }
+  package "model" {
+    class Asignatura
+  }
+  package "repository" {
+    class AsignaturaRepository
+  }
+  package "service" {
+    class AsignaturService
+  }
+}
+
+package "Soporte_service" {
+  package "controller" {
+    class SoporteController
+  }
+  package "model" {
+    class Soporte
+  }
+  package "repository" {
+    class SoporteRepository
+  }
+  package "service" {
+    class ServiceSoporte
+  }
+}
+
+' Relaciones entre microservicios
+Admin_service --> Estudiante_service : gestiona usuarios
+Admin_service --> Docente_service : gestiona docentes
+Admin_service --> Asignatura_service : administra asignaturas
+Estudiante_service --> Soporte_service : solicita ayuda
+
+@enduml

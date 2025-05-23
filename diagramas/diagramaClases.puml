@@ -1,0 +1,69 @@
+@startuml
+class "Administrador" {
+  - id: Long
+  - nombre: String
+  - apellido: String
+  - correo: String
+  - contraseña: String
+  + getId(): Long
+  + getNombre(): String
+  + getApellido(): String
+  + getCorreo(): String
+  + getContraseña(): String
+}
+
+class "Estudiante" {
+  - id: Long
+  - nombre: String
+  - apellido: String
+  - correo: String
+  - carrera: String
+  + getId(): Long
+  + getNombre(): String
+  + getApellido(): String
+  + getCorreo(): String
+  + getCarrera(): String
+}
+
+class "Docente" {
+  - id: Long
+  - nombre: String
+  - apellido: String
+  - correo: String
+  - especialidad: String
+  + getId(): Long
+  + getNombre(): String
+  + getApellido(): String
+  + getCorreo(): String
+  + getEspecialidad(): String
+}
+
+class "Asignatura" {
+  - id: Long
+  - nombre: String
+  - descripcion: String
+  - url_contenido: String
+  + getId(): Long
+  + getNombre(): String
+  + getDescripcion(): String
+  + getUrlContenido(): String
+}
+
+class "Soporte" {
+  - id: Long
+  - descripcion: String
+  - estado: String
+  - fecha: Date
+  + getId(): Long
+  + getDescripcion(): String
+  + getEstado(): String
+  + getFecha(): Date
+}
+
+"Administrador" -- "Estudiante" : Gestiona >
+"Administrador" -- "Docente" : Gestiona >
+"Docente" -- "Asignatura" : Enseña >
+"Estudiante" -- "Asignatura" : Inscribe >
+"Soporte" -- "Estudiante" : Solicita >
+
+@enduml

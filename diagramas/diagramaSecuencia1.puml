@@ -1,0 +1,22 @@
+@startuml
+title Diagrama de Secuencia - Estudiante solicita soporte
+
+actor Estudiante
+participant EstudianteController
+participant SoporteController
+participant ServiceSoporte
+participant SoporteRepository
+database eduhub_db
+
+Estudiante -> EstudianteController : Accede a la vista de soporte
+EstudianteController -> SoporteController : POST /soporte (con datos de solicitud)
+SoporteController -> ServiceSoporte : crearSolicitud()
+ServiceSoporte -> SoporteRepository : save(soporte)
+SoporteRepository -> eduhub_db : INSERT INTO servicio_soporte
+eduhub_db --> SoporteRepository : OK
+SoporteRepository --> ServiceSoporte : soporte guardado
+ServiceSoporte --> SoporteController : respuesta exitosa
+SoporteController --> EstudianteController : status 201 CREATED
+EstudianteController --> Estudiante : Solicitud enviada
+
+@enduml

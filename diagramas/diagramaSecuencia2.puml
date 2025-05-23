@@ -1,0 +1,22 @@
+@startuml
+title Diagrama de Secuencia - Admin registra nuevo docente
+
+actor Admin
+participant AdminController
+participant DocenteController
+participant ServiceDocente
+participant DocenteRepository
+database eduhub_db
+
+Admin -> AdminController : Accede a módulo docente
+AdminController -> DocenteController : POST /docente (con datos)
+DocenteController -> ServiceDocente : crearDocente()
+ServiceDocente -> DocenteRepository : save(docente)
+DocenteRepository -> eduhub_db : INSERT INTO servicio_docente
+eduhub_db --> DocenteRepository : OK
+DocenteRepository --> ServiceDocente : docente guardado
+ServiceDocente --> DocenteController : respuesta exitosa
+DocenteController --> AdminController : status 201 CREATED
+AdminController --> Admin : Docente registrado
+
+@enduml

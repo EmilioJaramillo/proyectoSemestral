@@ -1,0 +1,72 @@
+@startuml
+title Diagrama de Despliegue - EduHub
+
+skinparam componentStyle rectangle
+skinparam node {
+  BackgroundColor #FDFEFE
+  BorderColor Black
+}
+skinparam artifact {
+  BackgroundColor #EBF5FB
+  FontSize 11
+}
+
+left to right direction
+
+node "Máquina Local" {
+
+  frame "Cliente" {
+    node "Postman" {
+      artifact "Interfaz de prueba de endpoints"
+    }
+  }
+
+  frame "Servicios Spring Boot" {
+    node "Admin_service" {
+      artifact "AdminController"
+      artifact "ServiceAdmin"
+    }
+
+    node "Estudiante_service" {
+      artifact "EstudianteController"
+      artifact "ServiceEstudiante"
+    }
+
+    node "Docente_service" {
+      artifact "DocenteController"
+      artifact "ServiceDocente"
+    }
+
+    node "Asignatura_service" {
+      artifact "AsignaturaController"
+      artifact "AsignaturService"
+    }
+
+    node "Soporte_service" {
+      artifact "SoporteController"
+      artifact "ServiceSoporte"
+    }
+  }
+
+  database "MySQL - eduhub_db" {
+    artifact "admin"
+    artifact "estudiante"
+    artifact "docente"
+    artifact "asignatura"
+    artifact "soporte"
+  }
+}
+
+"Postman" --> "Admin_service" : Pruebas REST
+"Postman" --> "Estudiante_service"
+"Postman" --> "Docente_service"
+"Postman" --> "Asignatura_service"
+"Postman" --> "Soporte_service"
+
+"Admin_service" --> "MySQL - eduhub_db"
+"Estudiante_service" --> "MySQL - eduhub_db"
+"Docente_service" --> "MySQL - eduhub_db"
+"Asignatura_service" --> "MySQL - eduhub_db"
+"Soporte_service" --> "MySQL - eduhub_db"
+
+@enduml

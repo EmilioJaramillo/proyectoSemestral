@@ -1,0 +1,96 @@
+@startuml
+!define RECTANGLE class
+
+RECTANGLE Admin_service {
+  +POST /admin
+  +GET /admin
+  +GET /admin/{id}
+  +PUT /admin/{id}
+  +DELETE /admin/{id}
+}
+
+RECTANGLE Estudiante_service {
+  +POST /estudiante
+  +GET /estudiante
+  +GET /estudiante/{id}
+  +PUT /estudiante/{id}
+  +DELETE /estudiante/{id}
+}
+
+RECTANGLE Docente_service {
+  +POST /docente
+  +GET /docente
+  +GET /docente/{id}
+  +PUT /docente/{id}
+  +DELETE /docente/{id}
+}
+
+RECTANGLE Asignatura_service {
+  +POST /asignatura
+  +GET /asignatura
+  +GET /asignatura/{id}
+  +PUT /asignatura/{id}
+  +DELETE /asignatura/{id}
+}
+
+RECTANGLE Soporte_service {
+  +POST /soporte
+  +GET /soporte
+  +GET /soporte/{id}
+  +PUT /soporte/{id}
+  +DELETE /soporte/{id}
+}
+
+RECTANGLE servicio_admin {
+  +id
+  +nombre
+  +apellido
+  +correo
+  +contraseña
+}
+
+RECTANGLE servicio_estudiante {
+  +id
+  +nombre
+  +apellido
+  +correo
+  +carrera
+}
+
+RECTANGLE servicio_docente {
+  +id
+  +nombre
+  +apellido
+  +correo
+  +especialidad
+}
+
+RECTANGLE servicio_asignatura {
+  +id
+  +nombre
+  +descripcion
+  +nota_1
+  +nota_2
+  +nota_3
+  +notaFinal
+  +url_contenido
+}
+
+RECTANGLE servicio_soporte {
+  +id
+  +descripcion
+  +estado
+  +fecha
+}
+
+Admin_service -down-> servicio_admin : "Gestiona usuarios"
+Estudiante_service -down-> servicio_estudiante : "Gestiona estudiantes"
+Docente_service -down-> servicio_docente : "Gestiona docentes"
+Asignatura_service -down-> servicio_asignatura : "Gestiona asignaturas"
+Soporte_service -down-> servicio_soporte : "Gestiona soporte"
+Estudiante_service -down-> Asignatura_service : "Inscripción"
+Estudiante_service -down-> Soporte_service : "Solicita soporte"
+Soporte_service -down-> Admin_service : "Gestión de solicitudes"
+
+@enduml
+

@@ -1,0 +1,56 @@
+@startuml
+title Diagrama de Despliegue - EduHub
+
+node "Máquina Local" {
+
+  node "Postman (Cliente)" {
+    artifact "Interfaz de prueba de endpoints"
+  }
+
+  node "Spring Boot - Admin_service" {
+    artifact "AdminController"
+    artifact "ServiceAdmin"
+  }
+
+  node "Spring Boot - Estudiante_service" {
+    artifact "EstudianteController"
+    artifact "ServiceEstudiante"
+  }
+
+  node "Spring Boot - Docente_service" {
+    artifact "DocenteController"
+    artifact "ServiceDocente"
+  }
+
+  node "Spring Boot - Asignatura_service" {
+    artifact "AsignaturaController"
+    artifact "AsignaturService"
+  }
+
+  node "Spring Boot - Soporte_service" {
+    artifact "SoporteController"
+    artifact "ServiceSoporte"
+  }
+
+  database "MySQL - eduhub_db" {
+    artifact "servicio_admin"
+    artifact "servicio_estudiante"
+    artifact "servicio_docente"
+    artifact "servicio_asignatura"
+    artifact "servicio_soporte"
+  }
+}
+
+Postman --> "Spring Boot - Admin_service" : Pruebas REST
+Postman --> "Spring Boot - Estudiante_service"
+Postman --> "Spring Boot - Docente_service"
+Postman --> "Spring Boot - Asignatura_service"
+Postman --> "Spring Boot - Soporte_service"
+
+"Spring Boot - Admin_service" --> "MySQL - eduhub_db"
+"Spring Boot - Estudiante_service" --> "MySQL - eduhub_db"
+"Spring Boot - Docente_service" --> "MySQL - eduhub_db"
+"Spring Boot - Asignatura_service" --> "MySQL - eduhub_db"
+"Spring Boot - Soporte_service" --> "MySQL - eduhub_db"
+
+@enduml

@@ -1,0 +1,58 @@
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+skinparam usecase {
+  BackgroundColor #EAF2F8
+  BorderColor black
+  ArrowColor Navy
+  FontSize 12
+}
+skinparam actor {
+  BackgroundColor #F9EBEA
+  BorderColor Black
+  FontSize 12
+}
+skinparam backgroundColor #FDFEFE
+
+actor Admin
+actor Estudiante
+actor Docente
+actor Soporte
+
+package "Admin Service" {
+  usecase "Gestionar administradores" as UC1
+}
+
+package "Estudiante Service" {
+  usecase "Gestionar estudiantes" as UC2
+}
+
+package "Docente Service" {
+  usecase "Gestionar docentes" as UC3
+}
+
+package "Asignatura Service" {
+  usecase "Gestionar asignaturas" as UC4
+  usecase "Visualizar contenido por asignatura" as UC5
+}
+
+package "Soporte Service" {
+  usecase "Crear ticket de soporte" as UC6
+  usecase "Gestionar tickets de soporte" as UC7
+}
+
+' Relaciones
+Admin --> UC1 : "CRUD"
+Admin --> UC6 : "Solicita soporte"
+
+Estudiante --> UC2 : "CRUD"
+Estudiante --> UC5 : "Accede a recursos"
+Estudiante --> UC6 : "Solicita soporte"
+
+Docente --> UC3 : "CRUD"
+Docente --> UC4 : "Edita contenidos"
+Docente --> UC5 : "Visualiza recursos"
+
+Soporte --> UC7 : "Gestiona tickets"
+
+@enduml

@@ -1,0 +1,84 @@
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+skinparam usecase {
+  BackgroundColor #EAF2F8
+  BorderColor black
+  ArrowColor Navy
+}
+
+actor Admin
+actor Estudiante
+actor Docente
+actor Soporte
+
+package "Admin_service" {
+  usecase "Crear administrador" as UC1
+  usecase "Listar administradores" as UC2
+  usecase "Ver administrador por ID" as UC3
+  usecase "Actualizar administrador" as UC4
+  usecase "Eliminar administrador" as UC5
+}
+
+package "Estudiante_service" {
+  usecase "Registrar estudiante" as UC6
+  usecase "Listar estudiantes" as UC7
+  usecase "Ver estudiante por ID" as UC8
+  usecase "Modificar estudiante" as UC9
+  usecase "Eliminar estudiante" as UC10
+}
+
+package "Docente_service" {
+  usecase "Crear docente" as UC11
+  usecase "Listar docentes" as UC12
+  usecase "Ver docente por ID" as UC13
+  usecase "Actualizar docente" as UC14
+  usecase "Eliminar docente" as UC15
+}
+
+package "Asignatura_service" {
+  usecase "Crear asignatura" as UC16
+  usecase "Listar asignaturas" as UC17
+  usecase "Ver asignatura por ID" as UC18
+  usecase "Actualizar asignatura" as UC19
+  usecase "Eliminar asignatura" as UC20
+}
+
+package "Soporte_service" {
+  usecase "Crear ticket de soporte" as UC21
+  usecase "Listar tickets de soporte" as UC22
+  usecase "Consultar ticket por ID" as UC23
+  usecase "Actualizar ticket" as UC24
+  usecase "Eliminar ticket" as UC25
+}
+
+' Relaciones
+Admin --> UC1
+Admin --> UC2
+Admin --> UC3
+Admin --> UC4
+Admin --> UC5
+
+Estudiante --> UC6
+Estudiante --> UC7
+Estudiante --> UC8
+Estudiante --> UC9
+Estudiante --> UC10
+Estudiante --> UC16  : "Inscribirse en asignatura"
+
+Docente --> UC11
+Docente --> UC12
+Docente --> UC13
+Docente --> UC14
+Docente --> UC15
+Docente --> UC17 : "Ver asignaturas"
+Docente --> UC19 : "Actualizar asignatura"
+
+Soporte --> UC22
+Soporte --> UC23
+Soporte --> UC24
+Soporte --> UC25
+Estudiante --> UC21
+Admin --> UC21
+
+@enduml

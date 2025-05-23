@@ -1,0 +1,105 @@
+@startuml
+allowmixing
+
+skinparam backgroundColor #FDFEFE
+skinparam packageStyle rectangle
+skinparam class {
+  BackgroundColor #FBFCFC
+  BorderColor Black
+  FontSize 11
+}
+skinparam package {
+  BackgroundColor #EBF5FB
+  BorderColor Black
+  FontSize 12
+}
+
+left to right direction
+
+' ---- Admin Service ----
+package "Admin Service" {
+  package "controller" {
+    class AdminController
+  }
+  package "model" {
+    class Admin
+  }
+  package "repository" {
+    class AdminRepository
+  }
+  package "service" {
+    class ServiceAdmin
+  }
+}
+
+' ---- Estudiante Service ----
+package "Estudiante Service" {
+  package "controller" {
+    class EstudianteController
+  }
+  package "model" {
+    class Estudiante
+  }
+  package "repository" {
+    class EstudianteRepository
+  }
+  package "service" {
+    class ServiceEstudiante
+  }
+}
+
+' ---- Docente Service ----
+package "Docente Service" {
+  package "controller" {
+    class DocenteController
+  }
+  package "model" {
+    class Docente
+  }
+  package "repository" {
+    class DocenteRepository
+  }
+  package "service" {
+    class ServiceDocente
+  }
+}
+
+' ---- Asignatura Service ----
+package "Asignatura Service" {
+  package "controller" {
+    class AsignaturaController
+  }
+  package "model" {
+    class Asignatura
+  }
+  package "repository" {
+    class AsignaturaRepository
+  }
+  package "service" {
+    class AsignaturService
+  }
+}
+
+' ---- Soporte Service ----
+package "Soporte Service" {
+  package "controller" {
+    class SoporteController
+  }
+  package "model" {
+    class Soporte
+  }
+  package "repository" {
+    class SoporteRepository
+  }
+  package "service" {
+    class ServiceSoporte
+  }
+}
+
+' ---- Relaciones entre microservicios ----
+"Admin Service" --> "Estudiante Service" : gestiona usuarios
+"Admin Service" --> "Docente Service" : gestiona docentes
+"Admin Service" --> "Asignatura Service" : administra asignaturas
+"Estudiante Service" --> "Soporte Service" : solicita ayuda
+
+@enduml

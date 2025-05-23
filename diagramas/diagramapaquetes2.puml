@@ -1,0 +1,59 @@
+@startuml
+allowmixing
+
+skinparam backgroundColor #FDFEFE
+skinparam packageStyle rectangle
+skinparam class {
+  BackgroundColor #FBFCFC
+  BorderColor Black
+  FontSize 11
+}
+skinparam package {
+  BackgroundColor #EBF5FB
+  BorderColor Black
+  FontSize 12
+}
+
+left to right direction
+
+package "Asignatura Service" {
+  package "controller" {
+    class AsignaturaController
+  }
+  package "model" {
+    class Asignatura
+  }
+  package "repository" {
+    class AsignaturaRepository
+  }
+  package "service" {
+    class AsignaturService
+  }
+}
+
+package "Soporte Service" {
+  package "controller" {
+    class SoporteController
+  }
+  package "model" {
+    class Soporte
+  }
+  package "repository" {
+    class SoporteRepository
+  }
+  package "service" {
+    class ServiceSoporte
+  }
+}
+
+package "Admin Service" as Admin_service
+package "Estudiante Service" as Estudiante_service
+package "Docente Service" as Docente_service
+
+' Relaciones entre microservicios
+Admin_service --> Estudiante_service : gestiona usuarios
+Admin_service --> Docente_service : gestiona docentes
+Admin_service --> "Asignatura Service" : administra asignaturas
+Estudiante_service --> "Soporte Service" : solicita ayuda
+
+@enduml
