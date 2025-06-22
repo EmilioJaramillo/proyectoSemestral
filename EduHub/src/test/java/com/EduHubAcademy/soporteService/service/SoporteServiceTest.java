@@ -1,10 +1,13 @@
 package com.EduHubAcademy.soporteService.service;
 
 import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -44,4 +47,26 @@ class SoporteServiceTest {
         assertNotNull(result);
         verify(soporteRepository).save(soporte);
     }
+    // Testear obtener todos los soportes
+@Test
+void testGetAllSoportes() {
+    List<Soporte> soportes = Arrays.asList(
+        new Soporte(1L, "Problema 1", "Abierto", LocalDate.now()),
+        new Soporte(2L, "Problema 2", "Cerrado", LocalDate.now())
+    );
+    when(soporteRepository.findAll()).thenReturn(soportes);
+
+    List<Soporte> result = soporteService.getAllSoportes();
+
+    assertEquals(2, result.size());
+    assertEquals("Problema 1", result.get(0).getDescripcion());
+}
+
+// Testear caso de no encontrado (get por ID)
+@Test
+void testGetSoporteByIdNotFound() {
+    when(soporteRepository.findById(99L)).thenReturn(Optional.empty());
+    Soporte result = soporteService.getSoporteById(99L);
+    assertNull(result);
+}
 }

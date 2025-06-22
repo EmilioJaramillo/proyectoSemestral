@@ -1,5 +1,7 @@
 package com.EduHubAcademy.estudianteService.service;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -44,4 +46,19 @@ class EstudianteServiceTest {
         assertNotNull(result);
         verify(estudianteRepository).save(estudiante);
     }
+    // Testear obtener todos los estudiantes
+@Test
+void testGetAllEstudiantes() {
+    List<Estudiante> estudiantes = Arrays.asList(
+        new Estudiante(1L, "Pedro", "López", "pedro@mail.com", "Ingeniería"),
+        new Estudiante(2L, "Ana", "García", "ana@mail.com", "Derecho")
+    );
+    when(estudianteRepository.findAll()).thenReturn(estudiantes);
+
+    List<Estudiante> result = estudianteService.getAllEstudiantes();
+
+    assertEquals(2, result.size());
+    assertEquals("Pedro", result.get(0).getNombre());
+}
+
 }

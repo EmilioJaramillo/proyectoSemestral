@@ -1,9 +1,12 @@
 package com.EduHubAcademy.docenteService.service;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -44,4 +47,27 @@ class DocenteServiceTest {
         assertNotNull(result);
         verify(docenteRepository).save(docente);
     }
+
+    // Testear obtener todos los docentes
+@Test
+void testGetAllDocentes() {
+    List<Docente> docentes = Arrays.asList(
+        new Docente(1L, "Juan", "Pérez", "juan@mail.com", "Matemáticas"),
+        new Docente(2L, "Ana", "García", "ana@mail.com", "Historia")
+    );
+    when(docenteRepository.findAll()).thenReturn(docentes);
+
+    List<Docente> result = docenteService.getAllDocentes();
+
+    assertEquals(2, result.size());
+    assertEquals("Juan", result.get(0).getNombre());
+}
+
+// Testear caso de no encontrado (get por ID)
+@Test
+void testGetDocenteByIdNotFound() {
+    when(docenteRepository.findById(99L)).thenReturn(Optional.empty());
+    Docente result = docenteService.getDocenteById(99L);
+    assertNull(result);
+}
 }
