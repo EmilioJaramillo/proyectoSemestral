@@ -12,9 +12,9 @@ public class OpenApiConfig {
     public OpenAPI customOpenAPI() {
         return new OpenAPI()
             .info(new Info()
-                .title("API EduHub")
+                .title("EduHub")
                 .version("1.0")
-                .description("Documentación de la API EduHub"));
+                .description("EduHub – API para Administradores, Docentes, Estudiantes y Soporte"));
     }
     
 }
