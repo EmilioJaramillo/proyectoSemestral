@@ -1,17 +1,12 @@
 package com.EduHubAcademy.adminService.controller;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.CollectionModel;
 
 import com.EduHubAcademy.adminService.model.Admin;
 import com.EduHubAcademy.adminService.service.ServiceAdmin;
@@ -21,6 +16,8 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 
 @RestController
 @RequestMapping("/admins")
@@ -33,8 +30,14 @@ public class AdminController {
     @Operation(summary = "Obtener todos los administradores", description = "Devuelve una lista de todos los administradores")
     @ApiResponse(responseCode = "200", description = "Lista de administradores obtenida correctamente")
     @GetMapping("/traer")
-    public List<Admin> getAllAdmins() {
-        return adminService.getAllAdmins();
+    public CollectionModel<EntityModel<Admin>> getAllAdmins() {
+        List<EntityModel<Admin>> admins = adminService.getAllAdmins().stream()
+            .map(admin -> EntityModel.of(admin,
+                linkTo(methodOn(AdminController.class).getAdmin(admin.getId())).withSelfRel(),
+                linkTo(methodOn(AdminController.class).getAllAdmins()).withRel("admins")))
+            .collect(Collectors.toList());
+        return CollectionModel.of(admins,
+            linkTo(methodOn(AdminController.class).getAllAdmins()).withSelfRel());
     }
 
     @Operation(summary = "Obtener admin por ID", description = "Devuelve un administrador según su ID")
@@ -43,9 +46,12 @@ public class AdminController {
         @ApiResponse(responseCode = "404", description = "Admin no encontrado")
     })
     @GetMapping("/{id}")
-    public Admin getAdmin(
+    public EntityModel<Admin> getAdmin(
             @Parameter(description = "ID del admin a buscar") @PathVariable Long id) {
-        return adminService.getAdminById(id);
+        Admin admin = adminService.getAdminById(id);
+        return EntityModel.of(admin,
+            linkTo(methodOn(AdminController.class).getAdmin(id)).withSelfRel(),
+            linkTo(methodOn(AdminController.class).getAllAdmins()).withRel("admins"));
     }
 
     @Operation(summary = "Crear un nuevo administrador", description = "Guarda un nuevo administrador en la base de datos")

@@ -9,7 +9,11 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.CollectionModel;
 import java.util.List;
+import java.util.stream.Collectors;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 
 @RestController
 @RequestMapping("/estudiantes")
@@ -22,8 +26,14 @@ public class EstudianteController {
     @Operation(summary = "Obtener todos los estudiantes", description = "Devuelve una lista de todos los estudiantes")
     @ApiResponse(responseCode = "200", description = "Lista de estudiantes obtenida correctamente")
     @GetMapping("/traer")
-    public List<Estudiante> getAllEstudiantes() {
-        return estudianteService.getAllEstudiantes();
+    public CollectionModel<EntityModel<Estudiante>> getAllEstudiantes() {
+        List<EntityModel<Estudiante>> estudiantes = estudianteService.getAllEstudiantes().stream()
+            .map(estudiante -> EntityModel.of(estudiante,
+                linkTo(methodOn(EstudianteController.class).getEstudiante(estudiante.getId())).withSelfRel(),
+                linkTo(methodOn(EstudianteController.class).getAllEstudiantes()).withRel("estudiantes")))
+            .collect(Collectors.toList());
+        return CollectionModel.of(estudiantes,
+            linkTo(methodOn(EstudianteController.class).getAllEstudiantes()).withSelfRel());
     }
 
     @Operation(summary = "Obtener estudiante por ID", description = "Devuelve un estudiante según su ID")
@@ -32,9 +42,12 @@ public class EstudianteController {
         @ApiResponse(responseCode = "404", description = "Estudiante no encontrado")
     })
     @GetMapping("/{id}")
-    public Estudiante getEstudiante(
+    public EntityModel<Estudiante> getEstudiante(
             @Parameter(description = "ID del estudiante a buscar") @PathVariable Long id) {
-        return estudianteService.getEstudianteById(id);
+        Estudiante estudiante = estudianteService.getEstudianteById(id);
+        return EntityModel.of(estudiante,
+            linkTo(methodOn(EstudianteController.class).getEstudiante(id)).withSelfRel(),
+            linkTo(methodOn(EstudianteController.class).getAllEstudiantes()).withRel("estudiantes"));
     }
 
     @Operation(summary = "Crear un nuevo estudiante", description = "Guarda un nuevo estudiante en la base de datos")
