@@ -9,7 +9,11 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.CollectionModel;
 import java.util.List;
+import java.util.stream.Collectors;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 
 @RestController
 @RequestMapping("/cursos")
@@ -22,8 +26,14 @@ public class AsignaturaController {
     @Operation(summary = "Obtener todas las asignaturas", description = "Devuelve una lista de todas las asignaturas")
     @ApiResponse(responseCode = "200", description = "Lista de asignaturas obtenida correctamente")
     @GetMapping("/traer")
-    public List<Asignatura> getAllAsignaturas() {
-        return asignaturaService.getAllAsignaturas();
+    public CollectionModel<EntityModel<Asignatura>> getAllAsignaturas() {
+        List<EntityModel<Asignatura>> asignaturas = asignaturaService.getAllAsignaturas().stream()
+            .map(asignatura -> EntityModel.of(asignatura,
+                linkTo(methodOn(AsignaturaController.class).getAsignatura(asignatura.getId())).withSelfRel(),
+                linkTo(methodOn(AsignaturaController.class).getAllAsignaturas()).withRel("asignaturas")))
+            .collect(Collectors.toList());
+        return CollectionModel.of(asignaturas,
+            linkTo(methodOn(AsignaturaController.class).getAllAsignaturas()).withSelfRel());
     }
 
     @Operation(summary = "Obtener asignatura por ID", description = "Devuelve una asignatura según su ID")
@@ -32,9 +42,12 @@ public class AsignaturaController {
         @ApiResponse(responseCode = "404", description = "Asignatura no encontrada")
     })
     @GetMapping("/{id}")
-    public Asignatura getAsignatura(
+    public EntityModel<Asignatura> getAsignatura(
             @Parameter(description = "ID de la asignatura a buscar") @PathVariable Long id) {
-        return asignaturaService.getAsignaturaById(id);
+        Asignatura asignatura = asignaturaService.getAsignaturaById(id);
+        return EntityModel.of(asignatura,
+            linkTo(methodOn(AsignaturaController.class).getAsignatura(id)).withSelfRel(),
+            linkTo(methodOn(AsignaturaController.class).getAllAsignaturas()).withRel("asignaturas"));
     }
 
     @Operation(summary = "Crear una nueva asignatura", description = "Guarda una nueva asignatura en la base de datos")

@@ -9,7 +9,11 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.CollectionModel;
 import java.util.List;
+import java.util.stream.Collectors;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 
 @RestController
 @RequestMapping("/docentes")
@@ -22,8 +26,14 @@ public class DocenteController {
     @Operation(summary = "Obtener todos los docentes", description = "Devuelve una lista de todos los docentes")
     @ApiResponse(responseCode = "200", description = "Lista de docentes obtenida correctamente")
     @GetMapping("/traer")
-    public List<Docente> getAllDocentes() {
-        return docenteService.getAllDocentes();
+    public CollectionModel<EntityModel<Docente>> getAllDocentes() {
+        List<EntityModel<Docente>> docentes = docenteService.getAllDocentes().stream()
+            .map(docente -> EntityModel.of(docente,
+                linkTo(methodOn(DocenteController.class).getDocente(docente.getId())).withSelfRel(),
+                linkTo(methodOn(DocenteController.class).getAllDocentes()).withRel("docentes")))
+            .collect(Collectors.toList());
+        return CollectionModel.of(docentes,
+            linkTo(methodOn(DocenteController.class).getAllDocentes()).withSelfRel());
     }
 
     @Operation(summary = "Obtener docente por ID", description = "Devuelve un docente según su ID")
@@ -32,9 +42,12 @@ public class DocenteController {
         @ApiResponse(responseCode = "404", description = "Docente no encontrado")
     })
     @GetMapping("/{id}")
-    public Docente getDocente(
+    public EntityModel<Docente> getDocente(
             @Parameter(description = "ID del docente a buscar") @PathVariable Long id) {
-        return docenteService.getDocenteById(id);
+        Docente docente = docenteService.getDocenteById(id);
+        return EntityModel.of(docente,
+            linkTo(methodOn(DocenteController.class).getDocente(id)).withSelfRel(),
+            linkTo(methodOn(DocenteController.class).getAllDocentes()).withRel("docentes"));
     }
 
     @Operation(summary = "Crear un nuevo docente", description = "Guarda un nuevo docente en la base de datos")
