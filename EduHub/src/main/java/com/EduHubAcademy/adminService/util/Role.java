@@ -1,10 +1,10 @@
-package com.EduHubAcademy.usuarioService.util;
-
-import java.util.Arrays;
-import java.util.List;
+package com.EduHubAcademy.adminService.util;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+
+import java.util.Arrays;
+import java.util.List;
 
 @Getter
 @AllArgsConstructor

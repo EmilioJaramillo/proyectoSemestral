@@ -1,30 +1,59 @@
 package com.EduHubAcademy.estudianteService.service;
 
+import com.EduHubAcademy.asignaturaService.dto.AsignaturaDto;
+import com.EduHubAcademy.estudianteService.feignClient.AsignaturaClient;
 import com.EduHubAcademy.estudianteService.model.Estudiante;
+import com.EduHubAcademy.estudianteService.model.Inscripcion;
 import com.EduHubAcademy.estudianteService.repository.EstudianteRepository;
+import com.EduHubAcademy.estudianteService.repository.InscripcionRepository;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Service
-public class EstudianteService implements IEstudianteService {
+public class EstudianteService  {
 
 
     @Autowired
     private EstudianteRepository estudianteRepository;
 
-    @Override
+
+    @Autowired
+    private AsignaturaClient asignaturaClient;
+
+    @Autowired
+    private InscripcionRepository inscripcionRepository;
+
+    public Inscripcion inscribirEstudiante(Long estudianteId, Long asignaturaId) {
+        AsignaturaDto asignatura = asignaturaClient.getAsignatura(asignaturaId);
+
+        if (asignatura.getInscritos() >= asignatura.getCupoMaximo()) {
+            throw new IllegalStateException("No hay cupos disponibles para esta asignatura.");
+        }
+
+        Inscripcion inscripcion = new Inscripcion();
+        inscripcion.setEstudianteId(estudianteId);
+        inscripcion.setAsignaturaId(asignaturaId);
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        inscripcion.setFechaInscripcion(LocalDate.parse("10/03/2025", formatter));
+
+        return inscripcionRepository.save(inscripcion);
+    }
+
     public List<Estudiante> getAllEstudiantes() {
         return estudianteRepository.findAll();
     }
-    @Override
+
     public Estudiante getEstudianteById(Long id) {
         return estudianteRepository.findById(id).orElse(null);
     }
 
-    @Override
+
     public Estudiante saveEstudiante (Estudiante estudiante) {
 
         //llamo a la funcion de validacion
@@ -33,14 +62,14 @@ public class EstudianteService implements IEstudianteService {
         //en caso que todo salga bien se guardara el nuevo
         return estudianteRepository.save(estudiante);
     }
-    @Override
+
     public void deleteEstudiante(Long id) {
         if (!estudianteRepository.existsById(id)) {
             throw new IllegalArgumentException("No se encontró un estudiante con el ID proporcionado.");
         }
          estudianteRepository.deleteById(id);
     }
-    @Override
+
     public void editEstudiante(@NotNull Long id, @NotNull Estudiante estudiante) {
         if (estudiante.getId() == null || !estudianteRepository.existsById(estudiante.getId())) {
             throw new IllegalArgumentException("El estudiante que intenta editar no existe.");
@@ -50,7 +79,7 @@ public class EstudianteService implements IEstudianteService {
 
         this.saveEstudiante(estudiante);
     }
-    @Override
+
     public Estudiante findEstudiante(Long id) {
         return estudianteRepository.findById(id).orElse(null);
 

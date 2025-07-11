@@ -86,4 +86,25 @@ public class AdminController {
         adminService.editAdmin(id, admin);
         return adminService.findAdmin(id);
     }
+
+
+    /*@RestController
+@RequestMapping("/admin")
+public class AdminController {
+    @Autowired
+    private AdminRepository repository;
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Admin> getAdmin(@PathVariable Long id) {
+        return repository.findById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @PostMapping
+    public Admin createAdmin(@RequestBody Admin admin) {
+        return repository.save(admin);
+    }
+}
+*/
 }

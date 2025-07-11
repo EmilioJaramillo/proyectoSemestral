@@ -1,8 +1,20 @@
 package com.EduHubAcademy.asignaturaService.controller;
 
+import com.EduHubAcademy.asignaturaService.dto.AsignaturaDto;
 import com.EduHubAcademy.asignaturaService.model.Asignatura;
+import com.EduHubAcademy.asignaturaService.model.SaveAsignaturaRequest;
+import com.EduHubAcademy.asignaturaService.repository.AsignaturaRepository;
 import com.EduHubAcademy.asignaturaService.service.AsignaturaService;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -11,6 +23,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.CollectionModel;
+import org.springframework.web.server.ResponseStatusException;
+
 import java.util.List;
 import java.util.stream.Collectors;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
@@ -22,6 +36,11 @@ public class AsignaturaController {
 
     @Autowired
     private AsignaturaService asignaturaService;
+    @Autowired
+    private AsignaturaRepository repo;
+
+    @Autowired
+    private SaveAsignaturaRequest request;
 
     @Operation(summary = "Obtener todas las asignaturas", description = "Devuelve una lista de todas las asignaturas")
     @ApiResponse(responseCode = "200", description = "Lista de asignaturas obtenida correctamente")
@@ -41,21 +60,44 @@ public class AsignaturaController {
         @ApiResponse(responseCode = "200", description = "Asignatura encontrada"),
         @ApiResponse(responseCode = "404", description = "Asignatura no encontrada")
     })
+
+
+
+//    @GetMapping("/{id}")
+//    public ResponseEntity<EntityModel<Asignatura>> getAsignatura(  @Parameter(description = "ID de la asignatura a buscar")@PathVariable Long id) {
+//        Asignatura asignatura = asignaturaService.getAsignaturaById(id);
+//        if (asignatura == null) {
+//            return ResponseEntity.notFound().build();
+//        }
+//        return ResponseEntity.ok(
+//                EntityModel.of(asignatura,
+//                        linkTo(methodOn(AsignaturaController.class).getAsignatura(id)).withSelfRel(),
+//                        linkTo(methodOn(AsignaturaController.class).getAllAsignaturas()).withRel("asignaturas"))
+//        );
+//    }
+
+    //metodo para traer por Id
     @GetMapping("/{id}")
-    public EntityModel<Asignatura> getAsignatura(
-            @Parameter(description = "ID de la asignatura a buscar") @PathVariable Long id) {
-        Asignatura asignatura = asignaturaService.getAsignaturaById(id);
-        return EntityModel.of(asignatura,
-            linkTo(methodOn(AsignaturaController.class).getAsignatura(id)).withSelfRel(),
-            linkTo(methodOn(AsignaturaController.class).getAllAsignaturas()).withRel("asignaturas"));
+    public ResponseEntity<AsignaturaDto> getAsignatura(@PathVariable Long id) {
+        Asignatura asignatura = repo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Asignatura no encontrada"));
+
+        AsignaturaDto dto = new AsignaturaDto();
+        BeanUtils.copyProperties(asignatura, dto);
+        return ResponseEntity.ok(dto);
     }
+
 
     @Operation(summary = "Crear una nueva asignatura", description = "Guarda una nueva asignatura en la base de datos")
     @ApiResponse(responseCode = "201", description = "Asignatura creada correctamente")
     @PostMapping("/crear")
     public Asignatura saveAsignatura(
-            @Parameter(description = "Objeto asignatura a crear") @RequestBody Asignatura asignatura) {
-        return asignaturaService.saveAsignatura(asignatura);
+            @Parameter(description = "Objeto asignatura a crear")@RequestBody SaveAsignaturaRequest request) {
+        Asignatura asignatura = asignaturaService.saveAsignatura(
+                request.getNombre(),
+                request.getDocenteId()
+        );
+        return asignatura;
     }
 
     @Operation(summary = "Eliminar una asignatura", description = "Elimina una asignatura por su ID")
@@ -82,4 +124,18 @@ public class AsignaturaController {
         asignaturaService.editAsignatura(id, asignatura);
         return asignaturaService.findAsignatura(id);
     }
+    @PutMapping("/{id}/incrementar-inscritos")
+    public ResponseEntity<Void> incrementarInscritos(@PathVariable Long id) {
+        Asignatura asignatura = repo.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Asignatura no encontrada"));
+
+        if (asignatura.getInscritos() >= asignatura.getCupoMaximo()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No hay cupos disponibles");
+        }
+
+        asignatura.setInscritos(asignatura.getInscritos() + 1);
+        repo.save(asignatura);
+        return ResponseEntity.ok().build();
+    }
 }
+

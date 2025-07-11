@@ -8,4 +8,5 @@ public interface AdminRepository extends JpaRepository<Admin, Long>{
     boolean existsByCorreo(String correo);
 
     Estudiante findByCorreo(String correo);
+
 }
