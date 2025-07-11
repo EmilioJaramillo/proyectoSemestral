@@ -1,4 +1,4 @@
-package com.EduHubAcademy.asignaturaService.dto;
+package com.EduHubAcademy.estudianteService.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

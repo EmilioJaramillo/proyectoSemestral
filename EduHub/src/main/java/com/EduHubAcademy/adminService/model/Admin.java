@@ -23,10 +23,4 @@ public class Admin {
     private String apellido;
     private String correo;
     private String contrasenia;
-
-
-
-
-
-
 }

@@ -1,43 +1,64 @@
 package com.EduHubAcademy.asignaturaService.service;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+
+import com.EduHubAcademy.asignaturaService.dto.DocenteDto;
+import com.EduHubAcademy.asignaturaService.feignClient.DocenteClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.EduHubAcademy.asignaturaService.model.Asignatura;
 import com.EduHubAcademy.asignaturaService.repository.AsignaturaRepository;
 
 @Service
-public class AsignaturaService implements IAsignaturaService {
+public class AsignaturaService  {
 
     @Autowired
     private AsignaturaRepository asignaturaRepository;
+    @Autowired
+    private DocenteClient docenteClient;
 
-    @Override
+
     public List<Asignatura> getAllAsignaturas() {
         return asignaturaRepository.findAll();
     }
 
-    @Override
+
     public Asignatura getAsignaturaById(Long id) {
         return asignaturaRepository.findById(id).orElse(null);
     }
 
-    @Override
-    public Asignatura saveAsignatura(Asignatura asignatura) {
+
+    public Asignatura saveAsignatura(String nombreAsignatura, Long docenteId) {
+        DocenteDto docente = docenteClient.getDocente(docenteId);
+
+        if (!docente.isActivo()) {
+            throw new IllegalArgumentException("El docente no está activo. No se puede asignar.");
+        }
+
+        Asignatura asignatura = new Asignatura();
+        asignatura.setNombre(nombreAsignatura);
+        asignatura.setDocenteId(docenteId);
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        asignatura.setFechaCreacion(LocalDate.parse("11/02/2025", formatter));
+
         return asignaturaRepository.save(asignatura);
     }
 
-    @Override
+
+
     public void deleteAsignatura(Long id) {
         asignaturaRepository.deleteById(id);
     }
 
-    @Override
+
     public void editAsignatura(Long id, Asignatura asignatura) {
-        this.saveAsignatura(asignatura);
+        this.saveAsignatura(asignatura.getNombre(), asignatura.getDocenteId());
     }
 
-    @Override
+
     public Asignatura findAsignatura(Long id) {
         return asignaturaRepository.findById(id).orElse(null);
     }
@@ -53,3 +74,4 @@ public class AsignaturaService implements IAsignaturaService {
         }
     }
 }
+
