@@ -4,6 +4,8 @@ package com.EduHubAcademy.asignaturaService.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
+
 
 
 @AllArgsConstructor
@@ -20,7 +22,11 @@ public class Asignatura {
     private Long id;
     private String nombre;
     private String descripcion;
+    private Long docenteId;
     private String url_contenido;
+    private LocalDate fechaCreacion;
+    private int cupoMaximo;
+    private int inscritos = 0;
 
 
 

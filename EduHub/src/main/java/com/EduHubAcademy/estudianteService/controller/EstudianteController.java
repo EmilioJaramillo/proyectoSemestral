@@ -1,8 +1,10 @@
 package com.EduHubAcademy.estudianteService.controller;
 
 import com.EduHubAcademy.estudianteService.model.Estudiante;
+import com.EduHubAcademy.estudianteService.model.Inscripcion;
 import com.EduHubAcademy.estudianteService.service.EstudianteService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -81,5 +83,14 @@ public class EstudianteController {
             @Parameter(description = "Objeto estudiante con los nuevos datos") @RequestBody Estudiante estudiante) {
         estudianteService.editEstudiante(id, estudiante);
         return estudianteService.findEstudiante(id);
+    }
+
+    @PostMapping("/{id}/inscribirse")
+    public ResponseEntity<Inscripcion> inscribirse(
+            @PathVariable Long id,
+            @RequestParam Long asignaturaId
+    ) {
+        Inscripcion inscripcion = estudianteService.inscribirEstudiante(id, asignaturaId);
+        return ResponseEntity.ok(inscripcion);
     }
 }
